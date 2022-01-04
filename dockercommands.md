@@ -60,3 +60,69 @@
 
 - To create use `docker container create --publish 8080:80 <image name>`
 - To start use `docker container start <container identifier>`
+
+## Removing dangling containers.
+
+- Use `docker container rm <container identifier>`
+- Use `docker container prune` to remove all.
+- Use `--rm` to remove container as soon as it's stopped.
+  - i.e `docker container run --rm --detach --publish 8888:80 --name hello-dock-volatile newname`
+
+## Running containers in interactive mode.
+
+- Some images do not just run some pre configured program. These instead are configured to run shell by default. Shells are interactive programs. Images configured to run such a program are interactive images. They require special -it option to be passed in the container run command.
+  `docker container run --rm -it ubuntu`
+- -t sets the stage for you to interact with any interactive program inside a container.<br>
+  `docker container run -it node`
+
+## Executing commands inside a container
+
+i.e. `docker run alpine uname -a`. In this command `uname -a` was executed inside the alpine container.
+
+- To perform an encoding using an image like busybox you could execute the following command.
+  `docker container run --rm busybox sh -c 'echo -n my-secret | base64'`. What happens here is, in a container run command, whatever you pass after the image name gets passed to the default entry point of the image.
+  Most of images except executable ones uses shell or sh as the default entry point. Any valid shell command can be passed to them as arguments.
+
+## Working with executable images.
+
+- Containers are isolated from your local system, but if you can map local directory to the directiry inside the container the files should be accessible to the container.
+- One way to grant access to yout local file system is by using bind mounts. A bind mount lets you form two way data binding between the content of a local file system directory and another directory inside a container.
+- A bind mount in action <br>
+  `docker container run --rm -v $(pwd):/zone <image name> pdf` -v or --volume is used to create a bind mount for a container.
+- This option can take three firlds separated by colons (:).
+  The generic syntax for the option is as follows.
+  `--volume <local file system directory absolute path>:<container file system drectory absolute path>:<read write access>`
+- The third field is optional but you must pass the absolute path of your local directory and the absolute path of the directory inside.
+- The source directory example could be `/home/fhsin/thezone`
+
+# Image manipulation basics
+
+## Image creation basics
+
+- As explained images are multi-layered self contained files that act as templates for creating docker containers. They are like frozen, read only copy of a container.
+- In order to create an image using one of your programs you must have a clear vision of what you want from the image. Take the official nginx image for example. You can start a container suing the command.
+  `docker container run --rm --detach --name default-nginx --publish 8080:80 nginx`
+- Now if you visit `http://127.0.0.1:8080` you will see a default response image.
+- That's all nice and good but what if you want to create custom nginx image?
+- In order to make custom nginx image, you must have clear picture of what the final state of the image will be.
+- The image should have custom nginx pre-installed which can be done using package manager
+- The image should start nginx automatically upon running.
+- Create a Dockerfile, a Dockerfile is a collection of instructions that once processed by the daemon, results into an image.
+- Images are multilayered files and in this file, each line (known as instructions) that you've written creates a layer for your image.
+- Every valid `Dockerfile` starts with a `FROM`. The instruction sets the base image for your resultant image. By setting `ubuntu:latest` as the base image, you get all the goodness of ubuntu already available in your custom image, hence you can do things like `apt-get` for easy package installation.
+- The `EXPOSE` instruction is used to indicate port that needs to be published.
+- The `RUN` instruction in a docker file executes a command inside the container shell.
+- The `RUN` instructions are written ins `shell` form. Can also be written in `exec` form.
+- Finally the `CMD` instruction sets the default command for your image. This instruction is written in `exec` form comprising of three separate parts.
+  i.e `CMD ["nginx", "-g", "daemon off;"]`
+  - `gninx` refers to the NGINX executable.
+  - The `-g` and `daemon off` are options for NGINX.
+  - The `CMD` instructions can also be written in shell.
+- Now you can build an image by running <br>
+  `docker image <command> <options>`
+- Example `docker image build .`
+- To perform an image build , the daemon needs two very specific information. These are the name of the Dockerfile and build context.
+- `docker image build` is the command for bulding the image. The daemon finds any file named Dockerfile within context.
+- The . at the end sets the context for the build. The context means directory accessible by daemon during build process.
+- Now to run a container using this image, you can use the container run command coupled with the image ID you recieved as the result of the build process.
+- i.e `docker container run --rm --detach --name custom-nginx-packaged --publish 8080:80 3199372aa3fc`
