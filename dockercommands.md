@@ -138,3 +138,16 @@ i.e. `docker run alpine uname -a`. In this command `uname -a` was executed insid
   `docker image build --tag custom-nginx:packaged .`
 - Incase you forget to add tag during build, you could use
   `docker image tag <image id> <image repository>:<image tag>`
+
+## Listing and removing images
+
+`docker images ls`
+
+- Images listed can be removed using `docker image rm <image identifier>`
+- Identifier can be image ID or image repository.
+  If you use the repository you will have to identify tag as well.
+- To delete the `custom-nginx:packaged` image you may execute.
+  `docker image rm custom-nginx:packaged`
+- You can also use `image prune` to clean up all untagged dangling images as follows:
+  `docker image prune --force`
+- The `--force` or `-f` option skips any confirmation questions. You can also use `--all` or `-a` option to remove all cached images in your local registry.
