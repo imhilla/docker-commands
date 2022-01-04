@@ -126,3 +126,15 @@ i.e. `docker run alpine uname -a`. In this command `uname -a` was executed insid
 - The . at the end sets the context for the build. The context means directory accessible by daemon during build process.
 - Now to run a container using this image, you can use the container run command coupled with the image ID you recieved as the result of the build process.
 - i.e `docker container run --rm --detach --name custom-nginx-packaged --publish 8080:80 3199372aa3fc`
+
+## Tagging Images
+
+- Just like containers, you can assign custom identifiers to your images instead of relying
+  on the randomly generated id. In case of an mage it's called taging instaed of naming. The --tag or -t option is used in such cases.
+- Generic syntax for the option is as follows.
+  `--tag <image repository>:<image tag>`
+  The repository is usually known as the image name and tag indicates a certain build or version. i.e take the official mysql for example, if you want to run a container using a specific version of MYSQL i.e 5.7, you can execute `docker container run mysql:5.7` where mysql is the image repository and 5.7 is the tag.
+- In order to tag your custom NGINX image with `custom-ginx:packaged` you can execute the following commands.
+  `docker image build --tag custom-nginx:packaged .`
+- Incase you forget to add tag during build, you could use
+  `docker image tag <image id> <image repository>:<image tag>`
