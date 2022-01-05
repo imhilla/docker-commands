@@ -151,3 +151,13 @@ i.e. `docker run alpine uname -a`. In this command `uname -a` was executed insid
 - You can also use `image prune` to clean up all untagged dangling images as follows:
   `docker image prune --force`
 - The `--force` or `-f` option skips any confirmation questions. You can also use `--all` or `-a` option to remove all cached images in your local registry.
+
+## Sharing images online
+
+- Login `docker login`
+- In order to share an image online, the image has to be tagged. The general syntax is `--tag <image repository>:<image tag>`
+- To share an image online you will have to tag it following the `<docker hub username>/<image name>:<image tag>`
+- Example `docker image build --tag imhilla/custom-nginx:latest --file Dockerfile.built .`
+- Once the image has benn built you can then upload that by executing the following command.
+  `docker image push <image repository>:<image tag>`
+  i.e `docker image push imhilla/custom-nginx:latest`
